@@ -1,0 +1,31 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}
+Новости
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+{% block content %}
+    {% if post %}
+        <table width="90%" style="margin-top: 35px">
+        <tr>
+            <td><p><strong>Заголовок</strong></p></td>
+            <td><p><strong>Дата публикации</strong></p></td>
+            <td><p><strong>Категории</strong></p></td>
+            <td><p><strong>Содержание</strong></p></td>
+        </tr>
+    {% for post in posts %}
+        <tr>
+            <td>{{ post.name }}</td>
+            <td>{{ post.date_creation|date:'d M Y' }}</td>
+            <td>{{ post.category.name_cat }}</td>
+            <td>{{ post.description }}</td>
+        </tr>
+    {% endfor %}
+        </table>
+    {% else %}
+    <h3>Публикаций нет!</h3>
+    {% endif %}
+{% endblock content %}
