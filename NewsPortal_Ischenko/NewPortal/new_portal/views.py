@@ -15,17 +15,11 @@ from django.urls import reverse_lazy
 
 class PostsList(ListView):
     model = Post
-    # Поле, которое будет использоваться для сортировки объектов
-    ordering = '-date_creation'
-    # Указываем имя шаблона, в котором будут все инструкции о том,
-    # как именно пользователю должны быть показаны наши объекты
     template_name = 'posts.html'
-    # Это имя списка, в котором будут лежать все объекты.
-    # Его надо указать, чтобы обратиться к списку объектов в html-шаблоне.
     context_object_name = 'posts'
+    ordering = '-date_creation'
     paginate_by = 10
 
-    # Переопределяем функцию получения списка товаров
     def get_queryset(self):
         # Получаем обычный запрос
         queryset = super().get_queryset()
@@ -52,7 +46,6 @@ class PostsList(ListView):
 class PostDetail(DetailView):
     # Модель всё та же, но мы хотим получать информацию по отдельному товару
     model = Post
-    # Используем другой шаблон — product.html
     template_name = 'post.html'
     # Название объекта, в котором будет выбранный пользователем продукт
     context_object_name = 'post'
@@ -91,3 +84,20 @@ class PostDelete(DeleteView):
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
+
+class PostSearch(ListView):
+    model = Post
+    template_name = 'post_search.html'
+    context_object_name = 'posts'
+    ordering = '-date_creation'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = PostFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterset'] = self.filterset
+        return context

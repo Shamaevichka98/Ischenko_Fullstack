@@ -1,0 +1,68 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+    <form action="" method="get">
+        {{ filterset.form.as_p }}
+        <input type="submit" value="Найти">
+    </form>
+
+
+    <form action="" method="get" >
+        {{ filterset.form.non_field_errors }}
+
+        {{ filterset.form.name__icontains.errors }}
+        <label for="{{ filterset.form.name__icontains.id_for_label }}">Search</label>
+        <input
+            id="{{ filterset.form.name__icontains.id }}"
+            name="{{ filterset.form.name__icontains.name }}"
+            value="{{ filterset.form.name__icontains.value }}"
+            class="form-control"
+        >
+        <input type="submit" class="mt-3 btn-primary" value="Найти" />
+    </form>
+
+    <hr>
+    {% if posts %}
+        <table width="90%" style="margin-top: 35px">
+        <tr>
+            <td><p><strong>Заголовок</strong></p></td>
+            <td><p><strong>Дата публикации</strong></p></td>
+            <td><p><strong>Категории</strong></p></td>
+            <td><p><strong>Содержание</strong></p></td>
+        </tr>
+    {% for post in posts %}
+        <tr>
+            <td>{{ post.name }}</td>
+            <td>{{ post.date_creation|date:'d M Y' }}</td>
+            <td>{{ post.category.name }}</td>
+            <td>{{ post.description|truncatewords:20 }}</td>
+        </tr>
+    {% endfor %}
+        </table>
+    {% else %}
+    <h3>Публикаций нет!</h3>
+    {% endif %}
+   {# Добавляем пагинацию на страницу #}
+
+   {# Информация о предыдущих страницах #}
+   {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# Информация о текущей странице #}
+   {{ page_obj.number }}
+
+   {# Информация о следующих страницах #}
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+{% endblock content %}
