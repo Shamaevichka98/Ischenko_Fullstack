@@ -1,5 +1,5 @@
-from django.urls import path
-# Импортируем созданное нами представление
+from django.urls import path, include
+from django.contrib import admin
 from .views import PostsList, PostDetail, PostCreate, PostUpdate, PostDelete, PostSearch
 
 
@@ -9,5 +9,7 @@ urlpatterns = [
     path('create/', PostCreate.as_view(), name='post_create'),
     path('<int:pk>/update/', PostUpdate.as_view(), name='post_update'),
     path('<int:pk>/delete/', PostDelete.as_view(), name='post_delete'),
-    path('search/', PostSearch.as_view(), name='post_search')
+    path('search/', PostSearch.as_view(), name='post_search'),
+    path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

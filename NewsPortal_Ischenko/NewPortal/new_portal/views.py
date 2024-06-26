@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
@@ -65,16 +64,15 @@ def create_post(request):
 
 
 # Добавляем новое представление для создания товаров.
-class PostCreate(CreateView):
-    # Указываем нашу разработанную форму
+class PostCreate(LoginRequiredMixin, CreateView):
+    raise_exception = True
     form_class = PostForm
-    # модель товаров
     model = Post
-    # и новый шаблон, в котором используется форма.
     template_name = 'post_edit.html'
 
 
 class PostUpdate(UpdateView):
+    raise_exception = True
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
