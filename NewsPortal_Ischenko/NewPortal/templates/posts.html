@@ -23,6 +23,10 @@
     </form>
 
     <hr>
+    {% if perms.new_portal.add_post %}
+    <a href="{% url 'post_create' %}">Добавить товар</a>
+    {% endif %}
+
     {% if posts %}
         <table width="90%" style="margin-top: 35px">
         <tr>
@@ -30,6 +34,9 @@
             <td><p><strong>Дата публикации</strong></p></td>
             <td><p><strong>Категории</strong></p></td>
             <td><p><strong>Содержание</strong></p></td>
+            {% if perms.new_portal.change_post or perms.new_portal.delete_post %}
+            <td><p><strong>Действия</strong></p></td>
+            {% endif %}
         </tr>
     {% for post in posts %}
         <tr>
@@ -37,6 +44,14 @@
             <td>{{ post.date_creation|date:'d M Y' }}</td>
             <td>{{ post.category.name }}</td>
             <td>{{ post.description|truncatewords:20|censor }}</td>
+            <td>
+                {% if perms.new_portal.change_post %}
+                <a href="{% url 'post_update' pk=post.id %}">Изменить</a>
+                {% endif %}
+                {% if perms.new_portal.delete_post %}
+                <a href="{% url 'post_delete' post.id %}">Удалить</a>
+                {% endif %}
+            </td>
         </tr>
     {% endfor %}
         </table>
@@ -54,16 +69,22 @@
        {% endif %}
    {% endif %}
 
-   {# Информация о текущей странице #}
-   {{ page_obj.number }}
+    {% if page_obj.has_previous %}
+        <a href="?{% url_replace page=1 %}">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            ...
+            <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
 
-   {# Информация о следующих страницах #}
-   {% if page_obj.has_next %}
-       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
-       {% if paginator.num_pages != page_obj.next_page_number %}
-           ...
-           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
-       {% endif %}
-   {% endif %}
+    {{ page_obj.number }}
+
+    {% if page_obj.has_next %}
+        <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
 
 {% endblock content %}

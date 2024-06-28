@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
@@ -20,65 +20,52 @@ class PostsList(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        # Получаем обычный запрос
         queryset = super().get_queryset()
-        # Используем наш класс фильтрации.
-        # self.request.GET содержит объект QueryDict, который мы рассматривали
-        # в этом юните ранее.
-        # Сохраняем нашу фильтрацию в объекте класса,
-        # чтобы потом добавить в контекст и использовать в шаблоне.
         self.filterset = PostFilter(self.request.GET, queryset)
-        # Возвращаем из функции отфильтрованный список товаров
         return self.filterset.qs
 
     def get_context_data(self, **kwargs):
-        # С помощью super() мы обращаемся к родительским классам
-        # и вызываем у них метод get_context_data с теми же аргументами,
-        # что и были переданы нам.
-        # В ответе мы должны получить словарь.
         context = super().get_context_data(**kwargs)
-        # Добавляем в контекст объект фильтрации.
         context['filterset'] = self.filterset
         return context
 
 
 class PostDetail(DetailView):
-    # Модель всё та же, но мы хотим получать информацию по отдельному товару
     model = Post
     template_name = 'post.html'
-    # Название объекта, в котором будет выбранный пользователем продукт
     context_object_name = 'post'
 
 
 
-def create_post(request):
-    form = PostForm()
-
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/news/')
-
-    return render(request, 'post_edit.html', {'form': form})
+# def create_post(request):
+#     form = PostForm()
+#
+#     if request.method == 'POST':
+#         form = PostForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponseRedirect('/news/')
+#
+#     return render(request, 'post_edit.html', {'form': form})
 
 
 # Добавляем новое представление для создания товаров.
-class PostCreate(LoginRequiredMixin, CreateView):
-    raise_exception = True
+class PostCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('new_portal.add_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
 
 
-class PostUpdate(UpdateView):
-    raise_exception = True
+class PostUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = ('new_portal.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
 
 
-class PostDelete(DeleteView):
+class PostDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = ('new_portal.delete_post',)
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')

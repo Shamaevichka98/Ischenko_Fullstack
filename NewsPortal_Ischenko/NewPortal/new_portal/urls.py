@@ -10,6 +10,4 @@ urlpatterns = [
     path('<int:pk>/update/', PostUpdate.as_view(), name='post_update'),
     path('<int:pk>/delete/', PostDelete.as_view(), name='post_delete'),
     path('search/', PostSearch.as_view(), name='post_search'),
-    path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
 ]

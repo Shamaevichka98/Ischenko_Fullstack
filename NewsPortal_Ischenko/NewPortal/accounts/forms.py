@@ -1,0 +1,23 @@
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from allauth.account.forms import SignupForm
+from django.contrib.auth.models import Group
+
+
+class CustomSignupForm(SignupForm):
+    def save(self, request):
+        user = super().save(request)
+        common_users = Group.objects.get(name="common users")
+        user.groups.add(common_users)
+        return user
+
+    # class Meta:
+    #     model = User
+    #     fields = (
+    #         "username",
+    #         "first_name",
+    #         "last_name",
+    #         "email",
+    #         "password1",
+    #         "password2",
+    #     )
