@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.contrib import admin
-from .views import PostsList, PostDetail, PostCreate, PostUpdate, PostDelete, PostSearch
+from .views import PostsList, PostDetail, PostCreate, PostUpdate, PostDelete, PostSearch, subscriptions
 
 
 urlpatterns = [
@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:pk>/update/', PostUpdate.as_view(), name='post_update'),
     path('<int:pk>/delete/', PostDelete.as_view(), name='post_delete'),
     path('search/', PostSearch.as_view(), name='post_search'),
+    path('subscriptions/', subscriptions, name='subscriptions'),
 ]
