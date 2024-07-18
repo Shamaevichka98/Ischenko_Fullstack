@@ -169,8 +169,8 @@ DEFAULT_FROM_EMAIL = "ischenko.anst@yandex.ru"
 
 SERVER_EMAIL = "ischenko.anst@yandex.ru"
 
-CELERY_BROKER_URL = 'redis://логин:wrVnmINxlTPGOovWy1z3HWngX3AV3lr9@endpoint:10135'
-CELERY_RESULT_BACKEND = 'redis://логин:wrVnmINxlTPGOovWy1z3HWngX3AV3lr9@endpoint:10135'
+CELERY_BROKER_URL = 'redis://логин:пароль@wrVnmINxlTPGOovWy1z3HWngX3AV3lr9:10135'
+CELERY_RESULT_BACKEND = 'redis://логин:пароль@wrVnmINxlTPGOovWy1z3HWngX3AV3lr9:10135'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
