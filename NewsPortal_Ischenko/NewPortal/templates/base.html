@@ -1,0 +1,19 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock title %}</title>
+</head>
+<body>
+    <h2></h2>
+    {% load math_filters %}
+    {% load cache %}
+
+    {% cash 100 number %}
+        {{ 2|pow:1001999 }}
+    {% endcache %}
+
+    {% block content %}
+    {% endblock content %}
+</body>
+</html>

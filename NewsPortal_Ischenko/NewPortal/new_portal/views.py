@@ -11,6 +11,8 @@ from django.db.models import Exists, OuterRef
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from .models import Subscription, Category
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 
 
 
@@ -36,6 +38,17 @@ class PostDetail(DetailView):
     model = Post
     template_name = 'post.html'
     context_object_name = 'post'
+    queryset = Post.objects.all()
+
+    def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта, как ни странно
+        obj = cache.get(f'post-{self.kwargs["pk"]}',
+                        None)  # кэш очень похож на словарь, и метод get действует так же. Он забирает значение по ключу, если его нет, то забирает None.
+
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+        return obj
 
 
 
@@ -119,3 +132,8 @@ def subscriptions(request):
         'subscriptions.html',
         {'categories': categories_with_subscriptions},
     )
+
+
+@cache_page(60 * 15) # в аргументы к декоратору передаём количество секунд, которые хотим, чтобы страница держалась в кэше. Внимание! Пока страница находится в кэше, изменения, происходящие на ней, учитываться не будут!
+def my_view(request):
+    ...
